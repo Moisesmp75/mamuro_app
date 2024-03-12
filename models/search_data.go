@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"time"
 )
 
 type SearchDataResponse struct {
@@ -33,7 +34,7 @@ type Source struct {
 	Content                 string                  `json:"content"`
 	ContentTransferEncoding ContentTransferEncoding `json:"content_transfer_encoding"`
 	ContentType             ContentType             `json:"content_type"`
-	Date                    string                  `json:"date"`
+	Date                    time.Time                  `json:"date"`
 	From                    string                  `json:"from"`
 	MessageID               string                  `json:"message_id"`
 	MIMEVersion             MIMEVersion             `json:"mime_version"`
