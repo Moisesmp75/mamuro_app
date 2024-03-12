@@ -1,6 +1,7 @@
 package dto
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
@@ -17,11 +18,14 @@ var (
 	validate = validator.New()
 )
 
-func ValidateRequest(req SearchRequest) string {
-	if err := validate.Struct(req); err != nil {
-		return err.Error()
+func ValidateRequest(req *SearchRequest, body []byte) error {
+	if err := json.Unmarshal(body, &req); err != nil {
+		return err
 	}
-	return ""
+	if err := validate.Struct(req); err != nil {
+		return err
+	}
+	return nil
 }
 
 func RequestToString(req SearchRequest) string {

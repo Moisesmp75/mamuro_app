@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"mamuro_app/controllers"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -16,7 +17,6 @@ func addCors(r *chi.Mux) {
 	}))
 }
 
-
 func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.AllowContentType("application/json", "text/xml"))
@@ -25,6 +25,7 @@ func main() {
 
 	apiv1 := chi.NewRouter()
 
+	controllers.AddControllers(apiv1)
 	r.Mount("/api/v1", apiv1)
 
 	fmt.Println("Running on port: 3000")

@@ -12,9 +12,10 @@ import (
 )
 
 var (
-	url      = "http://zincsearch:4080/es/enron_mail/_search"
-	username = "admin"
-	password = "Complexpass#123"
+	search_url = "http://localhost:4080/es/enron_mail/_search"
+	post_url   = "http://localhost:4080/api/enron_mail/_doc"
+	username   = "admin"
+	password   = "Complexpass#123"
 )
 
 func errors(w http.ResponseWriter, code int, message string) {
@@ -23,16 +24,44 @@ func errors(w http.ResponseWriter, code int, message string) {
 	w.Write([]byte(resp.JsonResponse[*string](response)))
 }
 
-func validateRequest(w http.ResponseWriter, request *req.SearchRequest, body []byte) bool {
-	if err := json.Unmarshal(body, &request); err != nil {
-		errors(w, 400, err.Error())
-		return false
+func ToJSON(value any) ([]byte, error) {
+	jsonBytes, err := json.Marshal(value)
+	if err != nil {
+		return nil, err
 	}
-	if err := req.ValidateRequest(*request); err != "" {
-		errors(w, 400, err)
-		return false
+	return jsonBytes, nil
+}
+
+func performHTTPPostRequest(url string, request string) ([]byte, error) {
+	reqs, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(request)))
+	if err != nil {
+		return nil, err
 	}
-	return true
+	reqs.SetBasicAuth(username, password)
+	reqs.Header.Set("Content-Type", "application/json")
+
+	resps, err := http.DefaultClient.Do(reqs)
+	if err != nil {
+		return nil, err
+	}
+	defer resps.Body.Close()
+
+	bodyResponse, err := io.ReadAll(resps.Body)
+	if err != nil {
+		return nil, err
+	}
+	return bodyResponse, nil
+}
+
+func buildSearchResponse(response models.SearchDataResponse, request req.SearchRequest) resp.BaseResponse[[]models.Source] {
+	total_items := response.Hits.Total.Value
+	size := request.Size
+	from := request.From
+	meta_pagination := common.GenerateMeta(total_items, size, from)
+	data_result := response.Hits.Hits
+	mails := models.MapResource(data_result, models.HitsToSource)
+	response_mail := resp.NewResponsePagination[[]models.Source](mails, meta_pagination)
+	return response_mail
 }
 
 func SearchData(w http.ResponseWriter, r *http.Request) {
@@ -40,26 +69,12 @@ func SearchData(w http.ResponseWriter, r *http.Request) {
 	r.Body.Read(bodyRequest)
 
 	var request req.SearchRequest
-	if !validateRequest(w, &request, bodyRequest) {
+	if err := req.ValidateRequest(&request, bodyRequest); err != nil {
+		errors(w, 400, err.Error())
 		return
 	}
 
-	reqs, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(req.RequestToString(request))))
-	if err != nil {
-		errors(w, 500, err.Error())
-		return
-	}
-	reqs.SetBasicAuth(username, password)
-	reqs.Header.Set("Content-Type", "application/json")
-
-	resps, err := http.DefaultClient.Do(reqs)
-	if err != nil {
-		errors(w, 500, err.Error())
-		return
-	}
-	defer resps.Body.Close()
-
-	bodyResponse, err := io.ReadAll(resps.Body)
+	bodyResponse, err := performHTTPPostRequest(search_url, req.RequestToString(request))
 	if err != nil {
 		errors(w, 500, err.Error())
 		return
@@ -71,12 +86,29 @@ func SearchData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	total_items := response.Hits.Total.Value
-	size := request.Size
-	from := request.From
-	meta_pagination := common.GenerateMeta(total_items, size, from)
-	data_result := response.Hits.Hits
-	mails := models.MapResource(data_result, models.HitsToSource)
-	response_mail := resp.NewResponsePagination[[]models.Source](mails, meta_pagination)
+	response_mail := buildSearchResponse(response, request)
 	w.Write([]byte(resp.JsonResponse[[]byte](response_mail)))
+}
+
+func PostMail(w http.ResponseWriter, r *http.Request) {
+	bodyRequest := make([]byte, r.ContentLength)
+	r.Body.Read(bodyRequest)
+
+	var request req.EmailRequest
+	if err := req.ValidateEmailRequest(&request, bodyRequest); err != nil {
+		errors(w, 400, err.Error())
+		return
+	}
+
+	reqs, err := ToJSON(request)
+	if err != nil {
+		errors(w, 400, err.Error())
+		return
+	}
+	bodyResponse, err := performHTTPPostRequest(post_url, string(reqs))
+	if err != nil {
+		errors(w, 500, err.Error())
+		return
+	}
+	w.Write(bodyResponse)
 }

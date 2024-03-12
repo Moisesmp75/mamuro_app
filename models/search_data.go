@@ -34,7 +34,7 @@ type Source struct {
 	Content                 string                  `json:"content"`
 	ContentTransferEncoding ContentTransferEncoding `json:"content_transfer_encoding"`
 	ContentType             ContentType             `json:"content_type"`
-	Date                    time.Time                  `json:"date"`
+	Date                    time.Time               `json:"date"`
 	From                    string                  `json:"from"`
 	MessageID               string                  `json:"message_id"`
 	MIMEVersion             MIMEVersion             `json:"mime_version"`
@@ -104,7 +104,7 @@ func HitsToSource(hit Hit) Source {
 	return hit.Source
 }
 
-func MapResource(array []Hit, f func(Hit) Source)[] Source {
+func MapResource(array []Hit, f func(Hit) Source) []Source {
 	result := make([]Source, len(array))
 	for i, v := range array {
 		result[i] = f(v)
