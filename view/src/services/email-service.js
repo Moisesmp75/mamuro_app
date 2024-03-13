@@ -1,5 +1,5 @@
 const main_url = "http://localhost:3000";
-const url = `${main_url}api/v1/mail`
+const url = `${main_url}/api/v1/mail`
 
 export class MailService {
   constructor() {
