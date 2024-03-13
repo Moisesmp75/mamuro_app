@@ -4,7 +4,7 @@
       <SearchData :search="search_value"/>
       <DataTable :data="this.mails" :query="this.query" :showMailIndex="updatedSelectedMail"/>
       <div class="mt-4">
-        <Pagination :meta_data="this.pagination" :nextPage="nextPage" :prevPage="prevPage"/>
+        <Pagination :meta_data="this.pagination" :nextPage="nextPage" :prevPage="prevPage" :inputPage="inputPage"/>
       </div>
     </div>
     <div class="w-1/4">
@@ -71,15 +71,21 @@ export default {
       const request = {
         query: texto,
         size: this.size,
-        from: this.from,
+        from: 0,
       };
     
       const { data, meta } = await this.mailService.search_data(request);
       this.mails = [...data]
       this.pagination = {...meta}
       this.selectedMail = this.mails[0]
+    },
+    async inputPage() {
+      const { current_page, total_pages, items_per_page} = this.pagination
+      if(current_page > total_pages)
+      return
+      this.from = (current_page - 1) * items_per_page
+      await this.search_data()
     }
-
   },
   components: { DataTable, MailData, Pagination, SearchData }
 }

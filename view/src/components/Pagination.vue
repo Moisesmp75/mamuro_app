@@ -6,7 +6,9 @@
       class="py-2 px-4 bg-green-500 text-white rounded disabled:opacity-50"
     >Prev</button>
     <span class="text-sm">
-      Página {{ meta_data.current_page }} de {{ meta_data.total_pages }}
+      Página
+      <input type="number" v-model="meta_data.current_page" min="1" :max="meta_data.total_pages" class="text-center" @keyup.enter="inputPage">
+      de {{ meta_data.total_pages }}
     </span> 
     <button
       @click="nextPage"
@@ -27,6 +29,10 @@ export default {
       required: true
     },
     nextPage: {
+      type: Function,
+      required: true
+    },
+    inputPage: {
       type: Function,
       required: true
     }
