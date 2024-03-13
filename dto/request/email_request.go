@@ -6,11 +6,11 @@ import (
 )
 
 type EmailRequest struct {
-	From    string    `validate:"required"`
-	To      []string  `validate:"required"`
-	Date    time.Time `validate:"required"`
-	Subject string    `validate:"required"`
-	Content string    `validate:"required"`
+	From    string    `json:"from" validate:"required"`
+	To      []string  `json:"to" validate:"required"`
+	Date    time.Time `json:"date" validate:"required"`
+	Subject string    `json:"subject" validate:"required"`
+	Content string    `json:"content" validate:"required"`
 }
 
 func ValidateEmailRequest(req *EmailRequest, body []byte) error {
