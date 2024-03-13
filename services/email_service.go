@@ -21,7 +21,7 @@ var (
 func errors(w http.ResponseWriter, code int, message string) {
 	w.WriteHeader(code)
 	response := resp.ErrorResponse(message)
-	w.Write([]byte(resp.JsonResponse[*string](response)))
+	w.Write(ToJSONresponse(response))
 }
 
 func ToJSON(value any) ([]byte, error) {
@@ -30,6 +30,14 @@ func ToJSON(value any) ([]byte, error) {
 		return nil, err
 	}
 	return jsonBytes, nil
+}
+
+func ToJSONresponse(response any) []byte {
+	jsonData, err := json.Marshal(response)
+	if err != nil {
+		return []byte("Error to convert json")
+	}
+	return jsonData
 }
 
 func performHTTPPostRequest(url string, request string) ([]byte, error) {
@@ -51,6 +59,14 @@ func performHTTPPostRequest(url string, request string) ([]byte, error) {
 		return nil, err
 	}
 	return bodyResponse, nil
+}
+
+func parseJSONtoDto(body []byte, response any) error {
+	err := json.Unmarshal(body, &response)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func buildSearchResponse(response models.SearchDataResponse, request req.SearchRequest) resp.BaseResponse[[]models.Source] {
@@ -81,13 +97,13 @@ func SearchData(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var response models.SearchDataResponse
-	if err := models.ConvertToResponse(bodyResponse, &response); err != "" {
-		errors(w, 500, err)
+	if err := parseJSONtoDto(bodyResponse, &response); err != nil {
+		errors(w, 500, err.Error())
 		return
 	}
 
 	response_mail := buildSearchResponse(response, request)
-	w.Write([]byte(resp.JsonResponse[[]byte](response_mail)))
+	w.Write(ToJSONresponse(response_mail))
 }
 
 func PostMail(w http.ResponseWriter, r *http.Request) {
@@ -110,5 +126,14 @@ func PostMail(w http.ResponseWriter, r *http.Request) {
 		errors(w, 500, err.Error())
 		return
 	}
-	w.Write(bodyResponse)
+
+	var response resp.PostMailResponse
+	if err := parseJSONtoDto(bodyResponse, &response); err != nil {
+		errors(w, 500, err.Error())
+		return
+	}
+
+	response_post := resp.NewResponse[resp.PostMailResponse](response)
+
+	w.Write(ToJSONresponse(response_post))
 }

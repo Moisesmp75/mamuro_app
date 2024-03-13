@@ -1,7 +1,6 @@
 package models
 
 import (
-	"encoding/json"
 	"time"
 )
 
@@ -91,14 +90,6 @@ type Type string
 const (
 	Doc Type = "_doc"
 )
-
-func ConvertToResponse(body []byte, response *SearchDataResponse) string {
-	err := json.Unmarshal(body, &response)
-	if err != nil {
-		return err.Error()
-	}
-	return ""
-}
 
 func HitsToSource(hit Hit) Source {
 	return hit.Source
