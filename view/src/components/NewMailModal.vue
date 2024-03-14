@@ -40,6 +40,13 @@ export default {
     }
   },
   methods: {
+    clear_values() {
+      this.to = ""
+      this.from = []
+      this.subject = ""
+      this.date = new Date().toISOString().split('T')[0]
+      this.content = ""
+    },
     async submitForm() {
       const currentTime = new Date().toISOString().split('T')[1].slice(0, 8)
       const email = { 
@@ -49,6 +56,7 @@ export default {
         date: this.date + 'T' + currentTime + "-08:00",
         content: this.content }
       await this.sendEmail(email)
+      this.clear_values()
     }
   }
 }

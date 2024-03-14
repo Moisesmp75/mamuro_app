@@ -56,6 +56,7 @@ export default {
       this.showModal = false
     },
     async search_data() {
+      console.log("search_data")
       if(this.query !== "") {
         this.sort = "-date"
       }
@@ -86,6 +87,8 @@ export default {
       await this.search_data()
     },
     async search_value(searchValue) {
+      this.sort = searchValue ? "-date" : "-@timestamp"
+      console.log("search_value")
       const texto = this.query = searchValue;
       this.finded_value = texto;
         
@@ -93,7 +96,7 @@ export default {
         query: texto,
         size: this.size,
         from: 0,
-        sort: "-date"
+        sort: this.sort
       };
     
       const { data, meta } = await this.mailService.search_data(request);
@@ -109,9 +112,11 @@ export default {
       await this.search_data()
     },
     async sendEmail(email) {
-      console.log("Send", email)
       const response = await this.mailService.new_mail(email)
       console.log(response)
+      this.close_modal()
+      this.mails = []
+      await this.search_data()
     }
   },
   components: { DataTable, MailData, Pagination, SearchData, NewMailModal }
