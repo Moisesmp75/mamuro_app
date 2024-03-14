@@ -1,7 +1,7 @@
 <template>
   <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
     <div class="bg-white p-6 rounded shadow-md relative">
-      <button @click="showModal = false" class="absolute top-0 right-0 m-4">&times;</button>
+      <button @click="close_modal" class="absolute top-0 right-0 m-4">&times;</button>
       <form @submit.prevent="submitForm">
         <input type="text" placeholder="From:" v-model="this.from" class="block mb-4">
         <input type="text" placeholder="To:" v-model="this.to" class="block mb-4">
@@ -22,6 +22,10 @@ export default {
       required: true
     },
     sendEmail: {
+      type: Function,
+      required: true
+    },
+    close_modal: {
       type: Function,
       required: true
     }

@@ -1,9 +1,9 @@
 <template>
   <div class="flex p-4 relative">
-    <NewMailModal :showModal="showModal" :sendEmail="sendEmail"/>
+    <NewMailModal :showModal="showModal" :sendEmail="sendEmail" :close_modal="close_modal"/>
     <div class="flex flex-col gap-4 w-3/4 pr-4">
       <div class="w-1/4">
-        <button @click="showModal = true" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded">New</button>
+        <button @click="open_modal" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded">New</button>
       </div>
       <SearchData :search="search_value"/>
       <DataTable :data="this.mails" :query="this.query" :showMailIndex="updatedSelectedMail"/>
@@ -48,6 +48,12 @@ export default {
     };
   },
   methods: {
+    open_modal() {
+      this.showModal = true
+    },
+    close_modal() {
+      this.showModal = false
+    },
     async search_data() {
       const request = {
         query: this.query,
