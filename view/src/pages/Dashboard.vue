@@ -104,8 +104,8 @@ export default {
     },
     async inputPage() {
       const { current_page, total_pages, items_per_page} = this.pagination
-      if(current_page > total_pages)
-      return
+      if(current_page > total_pages || current_page < 1)
+        return
       this.from = (current_page - 1) * items_per_page
       await this.search_data()
     },

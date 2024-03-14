@@ -1,7 +1,9 @@
 package main
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"mamuro_app/controllers"
 	"net/http"
 
@@ -9,6 +11,22 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
+
+//go:embed view/dist
+var embedFrontend embed.FS
+
+func static(r *chi.Mux) {
+	front, err := fs.Sub(embedFrontend, "view/dist")
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	staticServer := http.FileServer(http.FS(front))
+
+	r.Get("/*", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		staticServer.ServeHTTP(w, r)
+	}))
+}
 
 func addCors(r *chi.Mux) {
 	r.Use(cors.Handler(cors.Options{
@@ -22,6 +40,7 @@ func main() {
 	r.Use(middleware.AllowContentType("application/json", "text/xml"))
 
 	addCors(r)
+	static(r)
 
 	apiv1 := chi.NewRouter()
 
