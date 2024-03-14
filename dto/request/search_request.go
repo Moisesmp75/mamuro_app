@@ -74,7 +74,6 @@ func parseRequestGetAll(req SearchRequest) string {
 }
 
 func parseRequestSearch(req SearchRequest) string {
-	fmt.Println(req.Sort)
 	return fmt.Sprintf(`
 	{
 		"query": {
