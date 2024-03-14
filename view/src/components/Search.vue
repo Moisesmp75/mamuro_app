@@ -3,7 +3,7 @@
     <input type="text" placeholder="Search..." v-model="searchValue"
           class="shadowed-text px-4 py-2 text-gray-700 bg-white border 
         border-gray-300 rounded-md focus:outline-none focus:border-blue-500">
-     <button class="bg-teal-700 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded " @click="search(this.searchValue)">Search</button>
+     <button class="bg-teal-700 hover:bg-teal-500 text-white font-bold py-2 px-4 rounded" @click="search(this.searchValue)">Search</button>
      
   </div>
 </template>

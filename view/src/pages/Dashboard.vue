@@ -1,6 +1,10 @@
 <template>
-  <div class="flex p-4">
+  <div class="flex p-4 relative">
+    <NewMailModal :showModal="showModal"/>
     <div class="flex flex-col gap-4 w-3/4 pr-4">
+      <div class="w-1/4">
+        <button @click="showModal = true" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded">New</button>
+      </div>
       <SearchData :search="search_value"/>
       <DataTable :data="this.mails" :query="this.query" :showMailIndex="updatedSelectedMail"/>
       <div class="mt-4">
@@ -17,6 +21,7 @@ import Pagination from "../components/Pagination.vue";
 import DataTable from "../components/DataTable.vue"
 import MailData from "../components/MailData.vue";
 import SearchData from "../components/Search.vue";
+import NewMailModal from "../components/NewMailModal.vue";
 import { MailService } from "../services/email-service"
 
 export default {
@@ -34,7 +39,12 @@ export default {
       mails: [],
       pagination: {},
       selectedMail: {},
-      finded_value: ''
+      finded_value: '',
+      showModal: false,
+      campo1: '',
+      campo2: '',
+      campo3: '',
+      campo4: ''
     };
   },
   methods: {
@@ -87,9 +97,8 @@ export default {
       await this.search_data()
     }
   },
-  components: { DataTable, MailData, Pagination, SearchData }
+  components: { DataTable, MailData, Pagination, SearchData, NewMailModal }
 }
 </script>
 <style lang="">
-  
 </style>

@@ -3,7 +3,7 @@
               flex-col gap-4 p-4 
               rounded-lg overflow-y-auto 
               max-h-[800px] shadow-2xl 
-            hover:bg-gray-200 animate-bounce 
+            
               border border-gray-700
               font-inter">
 
