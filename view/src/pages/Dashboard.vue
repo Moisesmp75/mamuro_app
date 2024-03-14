@@ -56,7 +56,6 @@ export default {
       this.showModal = false
     },
     async search_data() {
-      console.log("search_data")
       if(this.query !== "") {
         this.sort = "-date"
       }
@@ -88,7 +87,6 @@ export default {
     },
     async search_value(searchValue) {
       this.sort = searchValue ? "-date" : "-@timestamp"
-      console.log("search_value")
       const texto = this.query = searchValue;
       this.finded_value = texto;
         
@@ -113,7 +111,6 @@ export default {
     },
     async sendEmail(email) {
       const response = await this.mailService.new_mail(email)
-      console.log(response)
       this.close_modal()
       this.mails = []
       await this.search_data()
