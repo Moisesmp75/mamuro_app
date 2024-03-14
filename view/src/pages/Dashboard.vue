@@ -36,6 +36,7 @@ export default {
       query: "",
       size: 10,
       from: 0,
+      sort: "-@timestamp",
       mails: [],
       pagination: {},
       selectedMail: {},
@@ -55,10 +56,14 @@ export default {
       this.showModal = false
     },
     async search_data() {
+      if(this.query !== "") {
+        this.sort = "-date"
+      }
       const request = {
         query: this.query,
         size: this.size,
         from: this.from,
+        sort: this.sort
       };
       const { data, meta } = await this.mailService.search_data(request);
       this.mails = [...data]
@@ -88,6 +93,7 @@ export default {
         query: texto,
         size: this.size,
         from: 0,
+        sort: "-date"
       };
     
       const { data, meta } = await this.mailService.search_data(request);

@@ -30,7 +30,7 @@ func ValidateRequest(req *SearchRequest, body []byte) error {
 
 func RequestToString(req SearchRequest) string {
 	if req.Sort == "" {
-		req.Sort = "-date"
+		req.Sort = "-@timestamp"
 	}
 	if req.Size == 0 {
 		req.Size = 10
@@ -57,15 +57,24 @@ func parseRequestGetAll(req SearchRequest) string {
 			}
 		},
 		"sort": [
-			"-%v"
+			"%v"
 		],
 		"from": %v,
-		"size": %v
+		"size": %v,
+		"aggs": {
+			"histogram": {
+					"auto_date_histogram": {
+							"field": "@timestamp",
+							"buckets": 100
+					}
+			}
+		}
 	}
 	`, req.Sort, req.From, req.Size)
 }
 
 func parseRequestSearch(req SearchRequest) string {
+	fmt.Println(req.Sort)
 	return fmt.Sprintf(`
 	{
 		"query": {
@@ -83,7 +92,15 @@ func parseRequestSearch(req SearchRequest) string {
 			"%v"
 		],
 		"from": %v,
-		"size": %v
+		"size": %v,
+		"aggs": {
+			"histogram": {
+					"auto_date_histogram": {
+							"field": "date",
+							"buckets": 100
+					}
+			}
+		}
 	}
 	`, req.Query, req.Sort, req.From, req.Size)
 }
