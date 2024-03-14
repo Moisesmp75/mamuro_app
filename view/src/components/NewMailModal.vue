@@ -6,7 +6,7 @@
         <input type="text" placeholder="From:" v-model="this.from" class="block mb-4">
         <input type="text" placeholder="To:" v-model="this.to" class="block mb-4">
         <input type="text" placeholder="Subject:" v-model="this.subject" class="block mb-4">
-        <input type="text" placeholder="Date" v-model="this.date" class="block mb-4">
+        <input type="date" placeholder="Date" v-model="this.date" class="block mb-4">
         <input type="text" placeholder="Content" v-model="this.content" class="block mb-4">
         <button type="submit" class="py-2 px-4 bg-green-500 text-white rounded">Submit</button>
       </form>
@@ -31,18 +31,19 @@ export default {
       to: "",
       from: [],
       subject: "",
-      date: "",
+      date: new Date().toISOString().split('T')[0],
       content: ""
     }
   },
   methods: {
     async submitForm() {
+      const currentTime = new Date().toISOString().split('T')[1].slice(0, 8)
       const email = { 
         from: this.from, 
         to: this.to.split(","), 
         subject: this.subject, 
-        date: this.date, content: 
-        this.content }
+        date: this.date + 'T' + currentTime + "-08:00",
+        content: this.content }
       await this.sendEmail(email)
     }
   }
