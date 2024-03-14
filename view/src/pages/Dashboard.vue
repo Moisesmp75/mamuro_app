@@ -1,6 +1,6 @@
 <template>
   <div class="flex p-4 relative">
-    <NewMailModal :showModal="showModal"/>
+    <NewMailModal :showModal="showModal" :sendEmail="sendEmail"/>
     <div class="flex flex-col gap-4 w-3/4 pr-4">
       <div class="w-1/4">
         <button @click="showModal = true" class="bg-blue-700 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded">New</button>
@@ -95,6 +95,11 @@ export default {
       return
       this.from = (current_page - 1) * items_per_page
       await this.search_data()
+    },
+    async sendEmail(email) {
+      console.log("Send", email)
+      const response = await this.mailService.new_mail(email)
+      console.log(response)
     }
   },
   components: { DataTable, MailData, Pagination, SearchData, NewMailModal }

@@ -28,4 +28,22 @@ export class MailService {
       throw error
     }
   }
+  async new_mail(request) {
+    try {
+      this.requestOption["body"] = JSON.stringify(request)
+      const response = await fetch(`${url}`, this.requestOption)
+      if(!response.ok)
+        throw new Error(response.status)
+      const { success, message, data, meta } = await response.json()
+      return {
+        success,
+        message,
+        data,
+        meta
+      }
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
 }
