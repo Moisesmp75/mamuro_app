@@ -63,3 +63,44 @@ func TestValidateRequest(t *testing.T) {
 		t.Errorf("Structure req5 does not match expectedReq5. Expected: %v but got: %v", expectedReq2, *req2)
 	}
 }
+
+func TestRequestToString(t *testing.T) {
+	// Case 1: Request with empty Query
+	req1 := SearchRequest{
+		Query: "",
+		Size:  5,
+		From:  0,
+		Sort:  "-date",
+	}
+	expected1 := parseRequestGetAll(req1)
+	result1 := RequestToString(req1)
+	if result1 != expected1 {
+		t.Errorf("Case 1: Unexpected result. Expected: %s, but got: %s", expected1, result1)
+	}
+
+	// Case 2: Request with non-empty Query
+	req2 := SearchRequest{
+		Query: "test",
+		Size:  10,
+		From:  0,
+		Sort:  "-date",
+	}
+	expected2 := parseRequestSearch(req2)
+	result2 := RequestToString(req2)
+	if result2 != expected2 {
+		t.Errorf("Case 2: Unexpected result. Expected: %s, but got: %s", expected2, result2)
+	}
+
+	// Case 3: Request with empty Sort
+	req3 := SearchRequest{
+		Query: "test",
+		Size:  10,
+		From:  0,
+		Sort: "-@timestamp",
+	}
+	expected3 := parseRequestSearch(req3)
+	result3 := RequestToString(req3)
+	if result3 != expected3 {
+		t.Errorf("Case 3: Unexpected result. Expected: %s, but got: %s", expected3, result3)
+	}
+}
