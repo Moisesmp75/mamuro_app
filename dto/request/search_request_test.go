@@ -29,7 +29,7 @@ func TestValidateRequest(t *testing.T) {
 		t.Errorf("Error inesperado para JSON válido: %v", err)
 	}
 
-	// Caso 2: JSON válido pero campo faltante
+	// Caso 2: Valid JSON but missing field
 	invalidJSON2 := `{"query":"test","from":0,"sort":"-date"}`
 	req2 := &SearchRequest{}
 	expectedReq2 := SearchRequest{
@@ -47,7 +47,7 @@ func TestValidateRequest(t *testing.T) {
 		t.Errorf("Structure req5 does not match expectedReq5. Expected: %v but got: %v", expectedReq2, *req2)
 	}
 
-	// Caso 3: JSON inválido
+	// Caso 3: Invalid JSON
 	invalidJSON3 := `{}`
 	req3 := &SearchRequest{}
 	expectedReq3 := SearchRequest{
